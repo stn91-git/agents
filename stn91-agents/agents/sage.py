@@ -6,8 +6,8 @@ from agno.models.openai import OpenAIChat
 from agno.storage.agent.postgres import PostgresAgentStorage
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.vectordb.pgvector import PgVector, SearchType
-
-from db.session import db_url
+from agno.vectordb.mongodb import MongoDb
+from agents.mongodb_config import mdb_connection_string
 
 
 def get_sage(
@@ -31,20 +31,30 @@ def get_sage(
         # Tools available to the agent
         tools=[DuckDuckGoTools()],
         # Storage for the agent
-        storage=PostgresAgentStorage(table_name="sage_sessions", db_url=db_url),
+        storage=MongoDb(
+            collection_name="sage_sessions",
+            db_url=mdb_connection_string,  # 10 seconds wait after insert
+        ),
         # Knowledge base for the agent
         knowledge=AgentKnowledge(
-            vector_db=PgVector(table_name="sage_knowledge", db_url=db_url, search_type=SearchType.hybrid)
+            vector_db=MongoDb(
+                collection_name="sage_knowledge",
+                db_url=mdb_connection_string,
+                search_type=SearchType.hybrid,
+            ),
         ),
         # Description of the agent
-        description=dedent("""\
+        description=dedent(
+            """\
             You are Sage, an advanced Knowledge Agent designed to deliver accurate, context-rich, engaging responses.
             You have access to a knowledge base full of user-provided information and the capability to search the web if needed.
 
             Your responses should be clear, concise, and supported by citations from the knowledge base and/or the web.\
-        """),
+        """
+        ),
         # Instructions for the agent
-        instructions=dedent("""\
+        instructions=dedent(
+            """\
             Respond to the user by following the steps below:
 
             1. Always search your knowledge base for relevant information
@@ -82,7 +92,8 @@ def get_sage(
             - Strive to be both informative for quick queries and thorough for detailed exploration.
 
             7. In case of any uncertainties, clarify limitations and encourage follow-up queries.\
-        """),
+        """
+        ),
         additional_context=additional_context,
         # Format responses using markdown
         markdown=True,

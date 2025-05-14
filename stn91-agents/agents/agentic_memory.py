@@ -4,20 +4,27 @@ from agno.memory.v2.memory import Memory
 from agno.models.openai import OpenAIChat
 from agno.storage.sqlite import SqliteStorage
 from rich.pretty import pprint
+from agno.vectordb.mongodb import MongoDb
+from agents.mongodb_config import mdb_connection_string
 
 # UserId for the memories
 user_id = "ava"
 # Database file for memory and storage
-db_file = "tmp/agent.db"
 
 # Initialize memory.v2
 memory = Memory(
     # Use any model for creating memories
     model=OpenAIChat(id="gpt-4.1"),
-    db=SqliteMemoryDb(table_name="user_memories", db_file=db_file),
+    db=MongoDb(
+        collection_name="gmail",
+        db_url=mdb_connection_string,  # 10 seconds wait after insert
+    ),
 )
 # Initialize storage
-storage = SqliteStorage(table_name="agent_sessions", db_file=db_file)
+storage = MongoDb(
+    collection_name="gmail",
+    db_url=mdb_connection_string,  # 10 seconds wait after insert
+)
 
 # Initialize Agent
 memory_agent = Agent(

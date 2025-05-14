@@ -5,8 +5,8 @@ from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.storage.agent.postgres import PostgresAgentStorage
 from agno.tools.duckduckgo import DuckDuckGoTools
-
-from db.session import db_url
+from agno.vectordb.mongodb import MongoDb
+from agents.mongodb_config import mdb_connection_string
 
 
 def get_scholar(
@@ -29,10 +29,14 @@ def get_scholar(
         model=OpenAIChat(id=model_id),
         # Tools available to the agent
         tools=[DuckDuckGoTools()],
+        storage=MongoDb(
+            collection_name="scholar_sessions",
+            db_url=mdb_connection_string,  # 10 seconds wait after insert
+        ),
         # Storage for the agent
-        storage=PostgresAgentStorage(table_name="scholar_sessions", db_url=db_url),
         # Description of the agent
-        description=dedent("""\
+        description=dedent(
+            """\
             You are Scholar, a cutting-edge Answer Engine built to deliver precise, context-rich, and engaging responses.
             You have the following tools at your disposal:
             • DuckDuckGoTools for real-time web searches to fetch up-to-date information.
@@ -46,9 +50,11 @@ def get_scholar(
             - You must provide sources, whenever you provide a data point or a statistic.
             - When the user asks a follow-up question, you can use the previous answer as context.
             </critical>\
-            """),
+            """
+        ),
         # Instructions for the agent
-        instructions=dedent("""\
+        instructions=dedent(
+            """\
             Here's how you should answer the user's question:
 
             1. Gather Relevant Information
@@ -71,7 +77,8 @@ def get_scholar(
             - Strive to be both informative for quick queries and thorough for detailed exploration.
 
             4. In case of any uncertainties, clarify limitations and encourage follow-up queries.\
-            """),
+            """
+        ),
         additional_context=additional_context,
         # Format responses using markdown
         markdown=True,

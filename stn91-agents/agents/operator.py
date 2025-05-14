@@ -8,6 +8,7 @@ from agents.scholar import get_scholar
 class AgentType(Enum):
     SAGE = "sage"
     SCHOLAR = "scholar"
+    EMAIL = "email"
 
 
 def get_available_agents() -> List[str]:
@@ -23,6 +24,23 @@ def get_agent(
     debug_mode: bool = True,
 ):
     if agent_id == AgentType.SAGE:
-        return get_sage(model_id=model_id, user_id=user_id, session_id=session_id, debug_mode=debug_mode)
+        return get_sage(
+            model_id=model_id,
+            user_id=user_id,
+            session_id=session_id,
+            debug_mode=debug_mode,
+        )
+    elif agent_id == AgentType.EMAIL:
+        return get_scholar(
+            model_id=model_id,
+            user_id=user_id,
+            session_id=session_id,
+            debug_mode=debug_mode,
+        )
     else:
-        return get_scholar(model_id=model_id, user_id=user_id, session_id=session_id, debug_mode=debug_mode)
+        return get_scholar(
+            model_id=model_id,
+            user_id=user_id,
+            session_id=session_id,
+            debug_mode=debug_mode,
+        )
