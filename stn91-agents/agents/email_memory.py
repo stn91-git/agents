@@ -54,7 +54,6 @@
 #     memory = Memory(
 #         model=OpenAIChat(
 #             id="gpt-4.1",
-#             api_key="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",
 #         ),
 #         db=SqliteMemoryDb(table_name="email_memories", db_file=db_file),
 #     )
@@ -66,7 +65,7 @@
 #     email_agent = Agent(
 #         model=OpenAIChat(
 #             id="gpt-4.1",
-#             api_key="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",
+#             api_key="",
 #         ),
 #         memory=memory,
 #         enable_agentic_memory=True,
