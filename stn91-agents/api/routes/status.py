@@ -9,7 +9,7 @@ from utils.dttm import current_utc_str
 status_router = APIRouter(tags=["Status"])
 
 
-@status_router.get("/health")
+@status_router.get("/healths")
 def get_health():
     """Check the health of the Api"""
 

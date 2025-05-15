@@ -83,9 +83,7 @@ async def run_agent(agent_id: AgentType, body: RunRequest):
             session_id=body.session_id,
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"Agent not found: {str(e)}"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Agent not found: {str(e)}")
 
     if body.stream:
         return StreamingResponse(
